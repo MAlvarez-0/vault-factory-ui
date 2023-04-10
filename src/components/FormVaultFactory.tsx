@@ -14,8 +14,9 @@ export const FormVaultFactory = () => {
         functionName: 'deployVault',
     }
 
+    // @ts-ignore
     const { write: createVaultWrite, error: claimError, isError: isClaimError } = useContractWrite(contractConfig)
-    function handleSubmit(event) {
+    function handleSubmit(event: { preventDefault: () => void; target: HTMLFormElement | undefined; }) {
         event.preventDefault();
         const formData = new FormData(event.target);
 
@@ -36,6 +37,7 @@ export const FormVaultFactory = () => {
 
     return (
         <form
+            // @ts-ignore
             onSubmit={handleSubmit}
             className="w-full max-w-lg px-8 pt-4 pb-8 z-20 "
         >

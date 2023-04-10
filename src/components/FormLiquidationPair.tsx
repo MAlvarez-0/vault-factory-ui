@@ -18,7 +18,7 @@ interface vaultData {
 
 let vaultMap = new Map<string, vaultData>();
 
-function TokenSymbol(token : string) {
+function TokenSymbol(token : `0x${string}`) {
     return useContractRead({
         address: token,
         abi: erc20ABI,
@@ -43,14 +43,14 @@ function Vault(id: number) {
     })
 }
 
-function VaultSymbol(vaultAddress : string) {
+function VaultSymbol(vaultAddress : `0x${string}`) {
     return useContractRead({
         address: vaultAddress,
         abi: vaultAbi,
         functionName: 'symbol',
     })
 }
-function VaultAsset(vaultAddress : string) {
+function VaultAsset(vaultAddress : `0x${string}`) {
     return useContractRead({
         address: vaultAddress,
         abi: vaultAbi,
@@ -63,12 +63,12 @@ function AllVaults(pairsCount: number) {
     for (let i = 0; i < pairsCount; i++) {
         const { data: vaultAddress, isError: errorVault, isLoading: isLoadingVault } = Vault(i)
         if (!errorVault && !isLoadingVault) {
-            const { data: name, isError: errorName, isLoading: isLoadingName } = VaultSymbol(vaultAddress)
-            const { data: asset, isError: errorAsset, isLoading: isLoadingAsset } = VaultAsset(vaultAddress)
-            const { data: assetSymbol, isError: errorAssetSymbol, isLoading: isLoadingAssetSymbol } = TokenSymbol(asset)
-            let vault : vaultData = {name: name, address : vaultAddress, addressAsset: asset, assetSymbol: assetSymbol}
+            const { data: name, isError: errorName, isLoading: isLoadingName } = VaultSymbol(vaultAddress as `0x${string}`)
+            const { data: asset, isError: errorAsset, isLoading: isLoadingAsset } = VaultAsset(vaultAddress as `0x${string}`)
+            const { data: assetSymbol, isError: errorAssetSymbol, isLoading: isLoadingAssetSymbol } = TokenSymbol(asset as `0x${string}`)
+            let vault : vaultData = {name : name as string, address : vaultAddress as string, addressAsset: asset as string, assetSymbol: assetSymbol as string, symbol: ""}
             allVaults.push(vault)
-            vaultMap.set(vaultAddress, vault)
+            vaultMap.set(vaultAddress as `0x${string}`, vault)
         }
     }
     return allVaults
@@ -80,21 +80,24 @@ export const FormLiquidationPair = () => {
     const { data: signer } = useSigner()
     const { data: vaultsCount, isError: errorVaultsCount, isLoading: isLoadingVaultsCount } = VaultsCount()
 
-    const vaults = AllVaults(vaultsCount)
+    const vaults = AllVaults(vaultsCount as number)
     const contractConfig = {
         address: goerliLiquidationPairFactoryAddress,
         abi: createPairAbi,
         signerOrProvider: signer,
         functionName: 'createPair',
     }
+    // @ts-ignore
     const [selectedVault, setSelectedVault] : vaultData = useState();
+    // @ts-ignore
     const { write: createLiquidationPair, error: createLiquidationPairError, isError: isClaimError , isSuccess: success,  data: addressLiquidationPair} = useContractWrite(contractConfig)
-    function handleSubmit(event) {
+    function handleSubmit(event: { preventDefault: () => void; target: HTMLFormElement | undefined; }) {
         event.preventDefault();
         const formData = new FormData(event.target);
 
         const source = formData.get('source');
         const tokenIn = formData.get('token-in');
+        // @ts-ignore
         const tokenOut = (formData.get('token-out')).split(":");
         const swapMultiplier = formData.get('swap-multiplier');
         const liquidationFraction = formData.get('liquidation-fraction');
@@ -106,16 +109,20 @@ export const FormLiquidationPair = () => {
         }
     }
 
-    function handleVaultChange(event) {
-        const vaultAddress : vaultData = event.target.value;
+    function handleVaultChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        const vaultAddress : vaultData = event.target.value as unknown as vaultData;
         setSelectedVault(vaultAddress);
+        // @ts-ignore
         const getVault = vaultMap.get(vaultAddress)
+        // @ts-ignore
         document.getElementById("grid-token-out").value = getVault.assetSymbol + " : " + getVault.addressAsset;
     }
 
 
+
     return (
         <form
+            // @ts-ignore
             onSubmit={handleSubmit}
             className="w-full max-w-lg px-8 pt-4 pb-8 z-20 "
         >
@@ -245,7 +252,6 @@ export const FormLiquidationPair = () => {
                     />
                 </div>
             </div>
-            {success && addressLiquidationPair && <p>Liquidation Pair created at address: {addressLiquidationPair}</p>}
             <div className="flex justify-center">
                 <button type={'submit'} className="bg-purple-700 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded">
                     Create Pair
