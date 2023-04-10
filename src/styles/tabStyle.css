@@ -1,0 +1,90 @@
+@import '@radix-ui/colors/blackA.css';
+@import '@radix-ui/colors/green.css';
+@import '@radix-ui/colors/mauve.css';
+@import '@radix-ui/colors/violet.css';
+@import '@radix-ui/colors/sand.css';
+
+/* reset */
+button,
+fieldset,
+input {
+}
+
+.TabsRoot {
+    flex-direction: column;
+    box-shadow: 0 0 20px 0 #6366f1, 0 0 35px 0 #6366f1;
+
+
+}
+
+.TabsList {
+    display: flex;
+    border-bottom: 1px solid #6366f1;
+}
+
+.TabsTrigger {
+    font-family: inherit;
+    height: 45px;
+    color: var(--sand1);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    user-select: none;
+}
+.TabsTrigger:first-child {
+    border-top-left-radius: 6px;
+}
+.TabsTrigger:last-child {
+    border-top-right-radius: 6px;
+}
+.TabsTrigger:hover {
+    color: #6366f1;
+}
+.TabsTrigger[data-state='active'] {
+    color: #6366f1;
+    box-shadow: inset 0 -5px 0 0 #6366f1;
+}
+.TabsTrigger:focus {
+    position: relative;
+}
+
+.TabsContent {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    outline: none;
+}
+
+
+
+
+.Fieldset {
+    margin-bottom: 15px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.Label {
+    font-size: 13px;
+    line-height: 1;
+    margin-bottom: 10px;
+    color: var(--violet12);
+    display: block;
+}
+
+.Text {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: var(--sand1);
+    font-size: 15px;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+
